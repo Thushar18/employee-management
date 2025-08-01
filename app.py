@@ -292,53 +292,30 @@ def internal_error(error):
 
 if __name__ == '__main__':
     with app.app_context():
+        # Create upload folder
         os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
         
-        try:
-            db.create_all()
-            print("✅ Database tables created.")
-        except Exception as e:
-            print(f"❌ Failed to create tables: {e}")
+        # Create all tables
+        db.create_all()
+        print("✅ Database tables created.")
 
-        def create_default_users():
-            try:
-                admin = User.query.filter_by(username='admin').first()
-                if not admin:
-                    new_admin = User(username='admin', email='admin@jalaacademy.com', is_admin=True)
-                    new_admin.set_password('admin123')
-                    db.session.add(new_admin)
-                    print("✓ Admin user created: admin/admin123")
-
-                user = User.query.filter_by(username='user').first()
-                if not user:
-                    new_user = User(username='user', email='user@jalaacademy.com', is_admin=False)
-                    new_user.set_password('user123')
-                    db.session.add(new_user)
-                    print("✓ Regular user created: user/user123")
-
-                db.session.commit()
-            except Exception as e:
-                print(f"❌ Error creating users: {e}")
-                db.session.rollback()
-
-        if Employee.query.count() == 0:
-            sample_employee = Employee(
-                first_name="John",
-                last_name="Doe",
-                email="john.doe@example.com",
-                phone="+1-555-0100",
-                department="IT",
-                position="Developer",
-                salary=70000,
-                hire_date=datetime(2023, 1, 15),
-                gender="Male",
-                address="123 Tech St",
-                is_active=True,
-                created_by=1
-            )
-            db.session.add(sample_employee)
+        # Create default users
+        admin = User.query.filter_by(username='admin').first()
+        if not admin:
+            new_admin = User(username='admin', email='admin@jalaacademy.com', is_admin=True)
+            new_admin.set_password('admin123')
+            db.session.add(new_admin)
             db.session.commit()
-            print("✓ Added sample employee")
+            print("✓ Admin user created: admin/admin123")
 
-    
-    app.run(debug=False)
+        user = User.query.filter_by(username='user').first()
+        if not user:
+            new_user = User(username='user', email='user@jalaacademy.com', is_admin=False)
+            new_user.set_password('user123')
+            db.session.add(new_user)
+            db.session.commit()
+            print("✓ Regular user created: user/user123")
+
+    # Run the app
+    port = int(os.environ.get('PORT', 10000))
+    app.run(debug=False, host='0.0.0.0', port=port)
