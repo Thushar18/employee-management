@@ -292,85 +292,55 @@ def internal_error(error):
 
 if __name__ == '__main__':
     with app.app_context():
-        # Create upload directory
+        # Create upload folder
         os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
         
         # Create all tables
-        db.create_all()
-        print("✅ Database tables created.")
+        try:
+            db.create_all()
+            print("✅ Database tables created.")
+        except Exception as e:
+            print(f"❌ Failed to create tables: {e}")
 
         # Create default users
         def create_default_users():
-            admin_user = User.query.filter_by(username='admin').first()
-            if not admin_user:
-                admin = User(
-                    username='admin',
-                    email='admin@jalaacademy.com',
-                    is_admin=True
-                )
-                admin.set_password('admin123')
-                db.session.add(admin)
+            admin = User.query.filter_by(username='admin').first()
+            if not admin:
+                new_admin = User(username='admin', email='admin@jalaacademy.com', is_admin=True)
+                new_admin.set_password('admin123')
+                db.session.add(new_admin)
                 print("✓ Admin user created: admin/admin123")
 
-            regular_user = User.query.filter_by(username='user').first()
-            if not regular_user:
-                user = User(
-                    username='user',
-                    email='user@jalaacademy.com',
-                    is_admin=False
-                )
-                user.set_password('user123')
-                db.session.add(user)
+            user = User.query.filter_by(username='user').first()
+            if not user:
+                new_user = User(username='user', email='user@jalaacademy.com', is_admin=False)
+                new_user.set_password('user123')
+                db.session.add(new_user)
                 print("✓ Regular user created: user/user123")
 
             db.session.commit()
 
         create_default_users()
 
-        # Create sample employees if none exist
-        def create_sample_employees():
-            if Employee.query.count() == 0:
-                employees = [
-                    {
-                        'first_name': 'John',
-                        'last_name': 'Doe',
-                        'email': 'john.doe@company.com',
-                        'phone': '+1-555-0101',
-                        'department': 'IT',
-                        'position': 'Software Engineer',
-                        'salary': 75000.00,
-                        'hire_date': datetime(2023, 1, 15),
-                        'gender': 'Male',
-                        'address': '123 Main St, Anytown, USA 12345',
-                        'skills': 'Python, JavaScript, SQL',
-                        'is_active': True,
-                        'created_by': 1
-                    },
-                    {
-                        'first_name': 'Jane',
-                        'last_name': 'Smith',
-                        'email': 'jane.smith@company.com',
-                        'phone': '+1-555-0102',
-                        'department': 'HR',
-                        'position': 'HR Manager',
-                        'salary': 65000.00,
-                        'hire_date': datetime(2022, 6, 10),
-                        'gender': 'Female',
-                        'address': '456 Oak Ave, Somewhere, USA 67890',
-                        'skills': 'Communication, Leadership',
-                        'is_active': True,
-                        'created_by': 1
-                    }
-                ]
-                
-                for emp_data in employees:
-                    employee = Employee(**emp_data)
-                    db.session.add(employee)
-                
-                db.session.commit()
-                print(f"✓ Created {len(employees)} sample employees")
-
-        create_sample_employees()
+        # Optional: Add sample employees
+        if Employee.query.count() == 0:
+            sample_employee = Employee(
+                first_name="John",
+                last_name="Doe",
+                email="john.doe@example.com",
+                phone="+1-555-0100",
+                department="IT",
+                position="Developer",
+                salary=70000,
+                hire_date=datetime(2023, 1, 15),
+                gender="Male",
+                address="123 Tech St",
+                is_active=True,
+                created_by=1
+            )
+            db.session.add(sample_employee)
+            db.session.commit()
+            print("✓ Added sample employee")
 
     # Run the app
-    app.run(debug=False)  # Turn off debug in production
+    app.run(debug=False)

@@ -11,7 +11,12 @@ class Config:
 
     # Database configuration
     # Uses DATABASE_URL from environment, or defaults to MySQL with PyMySQL
+    # Use PostgreSQL on Render
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'postgresql://localhost/employee_management'
+
+# Make sure it uses the right dialect
+    if 'postgres://' in SQLALCHEMY_DATABASE_URI:
+        SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace('postgres://', 'postgresql://')
     
     # Disable SQLAlchemy event system (to save resources)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
