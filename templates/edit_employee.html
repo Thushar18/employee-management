@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% block title %}Edit Employee - Employee Management System{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0">Edit Employee: {{ employee.first_name }} {{ employee.last_name }}</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data" id="employeeForm">
+                    {{ form.hidden_tag() }}
+                    {% if employee.image_filename %}
+                    <div class="text-center mb-3">
+                        <img src="{{ url_for('static', filename='uploads/' + employee.image_filename) }}" 
+                             alt="Current Photo" class="rounded-circle" width="100" height="100">
+                        <p class="text-muted small mt-1">Current Photo</p>
+                    </div>
+                    {% endif %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.first_name.label(class="form-label") }}
+                            {{ form.first_name(class="form-control", id="first_name") }}
+                            <span class="invalid-feedback" id="first_name-error"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.last_name.label(class="form-label") }}
+                            {{ form.last_name(class="form-control", id="last_name") }}
+                            <span class="invalid-feedback" id="last_name-error"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.email.label(class="form-label") }}
+                            {{ form.email(class="form-control", id="email") }}
+                            <span class="invalid-feedback" id="email-error"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.phone.label(class="form-label") }}
+                            {{ form.phone(class="form-control", id="phone") }}
+                            <span class="invalid-feedback" id="phone-error"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.department.label(class="form-label") }}
+                            {{ form.department(class="form-select", id="department") }}
+                            <span class="invalid-feedback" id="department-error"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.position.label(class="form-label") }}
+                            {{ form.position(class="form-control", id="position") }}
+                            <span class="invalid-feedback" id="position-error"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.salary.label(class="form-label") }}
+                            {{ form.salary(class="form-control", id="salary") }}
+                            <span class="invalid-feedback" id="salary-error"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.hire_date.label(class="form-label") }}
+                            {{ form.hire_date(class="form-control", id="hire_date") }}
+                            <span class="invalid-feedback" id="hire_date-error"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.gender.label(class="form-label") }}
+                            <div>
+                                {% for value, label in form.gender.choices %}
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="gender" 
+                                           id="gender_{{ value }}" value="{{ value }}"
+                                           {% if form.gender.data == value %}checked{% endif %}>
+                                    <label class="form-check-label" for="gender_{{ value }}">{{ label }}</label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <span class="invalid-feedback" id="gender-error"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.image.label(class="form-label") }}
+                            {{ form.image(class="form-control", id="image") }}
+                            <div class="form-text">Leave empty to keep current photo</div>
+                            <span class="invalid-feedback" id="image-error"></span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        {{ form.address.label(class="form-label") }}
+                        {{ form.address(class="form-control", rows="3", id="address") }}
+                        <span class="invalid-feedback" id="address-error"></span>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.skills.label(class="form-label") }}
+                            {{ form.skills(class="form-control", id="skills", placeholder="e.g. Python, JavaScript, SQL") }}
+                            <div class="form-text">Separate multiple skills with commas</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.website.label(class="form-label") }}
+                            {{ form.website(class="form-control", id="website", placeholder="https://example.com") }}
+                            <span class="invalid-feedback" id="website-error"></span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        {{ form.notes.label(class="form-label") }}
+                        {{ form.notes(class="form-control", rows="3", id="notes") }}
+                    </div>
+                    <div class="mb-3 form-check">
+                        {{ form.is_active(class="form-check-input", id="is_active") }}
+                        {{ form.is_active.label(class="form-check-label") }}
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Update Employee</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Reuse the same validation logic as add_employee.html
+document.getElementById('employeeForm').addEventListener('submit', function(e) {
+    let isValid = true;
+    const firstName = document.getElementById('first_name');
+    const lastName = document.getElementById('last_name');
+    const email = document.getElementById('email');
+    const phone = document.getElementById('phone');
+    const salary = document.getElementById('salary');
+    const address = document.getElementById('address');
+    const website = document.getElementById('website');
+
+    if (firstName.value.trim().length < 2) {
+        setFieldInvalid('first_name', 'First name must be at least 2 characters');
+        isValid = false;
+    } else {
+        setFieldValid('first_name');
+    }
+
+    if (lastName.value.trim().length < 2) {
+        setFieldInvalid('last_name', 'Last name must be at least 2 characters');
+        isValid = false;
+    } else {
+        setFieldValid('last_name');
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email.value)) {
+        setFieldInvalid('email', 'Please enter a valid email address');
+        isValid = false;
+    } else {
+        setFieldValid('email');
+    }
+
+    if (phone.value.trim().length < 10) {
+        setFieldInvalid('phone', 'Phone must be at least 10 digits');
+        isValid = false;
+    } else {
+        setFieldValid('phone');
+    }
+
+    if (parseFloat(salary.value) <= 0) {
+        setFieldInvalid('salary', 'Salary must be greater than 0');
+        isValid = false;
+    } else {
+        setFieldValid('salary');
+    }
+
+    if (address.value.trim().length < 10) {
+        setFieldInvalid('address', 'Address must be at least 10 characters');
+        isValid = false;
+    } else {
+        setFieldValid('address');
+    }
+
+    if (website.value && !website.value.startsWith('http')) {
+        setFieldInvalid('website', 'Website must start with http:// or https://');
+        isValid = false;
+    } else {
+        setFieldValid('website');
+    }
+
+    if (!isValid) e.preventDefault();
+});
+</script>
+{% endblock %}

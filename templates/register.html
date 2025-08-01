@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Register - Employee Management System{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Create Account</h2>
+                <form method="POST" id="registerForm">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.username.label(class="form-label") }}
+                        {{ form.username(class="form-control", id="username") }}
+                        <span class="invalid-feedback" id="username-error"></span>
+                    </div>
+                    <div class="mb-3">
+                        {{ form.email.label(class="form-label") }}
+                        {{ form.email(class="form-control", id="email") }}
+                        <span class="invalid-feedback" id="email-error"></span>
+                    </div>
+                    <div class="mb-3">
+                        {{ form.password.label(class="form-label") }}
+                        {{ form.password(class="form-control", id="password") }}
+                        <span class="invalid-feedback" id="password-error"></span>
+                    </div>
+                    <div class="mb-3 form-check">
+                        {{ form.is_admin(class="form-check-input", id="is_admin") }}
+                        {{ form.is_admin.label(class="form-check-label") }}
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Register</button>
+                    </div>
+                </form>
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('login') }}" class="text-muted">Already have an account? Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    let isValid = true;
+    
+    // Username validation
+    const username = document.getElementById('username');
+    const usernameError = document.getElementById('username-error');
+    if (username.value.length < 3) {
+        username.classList.add('is-invalid');
+        usernameError.textContent = 'Username must be at least 3 characters';
+        isValid = false;
+    } else {
+        username.classList.remove('is-invalid');
+        usernameError.textContent = '';
+    }
+    
+    // Email validation
+    const email = document.getElementById('email');
+    const emailError = document.getElementById('email-error');
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email.value)) {
+        email.classList.add('is-invalid');
+        emailError.textContent = 'Please enter a valid email address';
+        isValid = false;
+    } else {
+        email.classList.remove('is-invalid');
+        emailError.textContent = '';
+    }
+    
+    // Password validation
+    const password = document.getElementById('password');
+    const passwordError = document.getElementById('password-error');
+    if (password.value.length < 6) {
+        password.classList.add('is-invalid');
+        passwordError.textContent = 'Password must be at least 6 characters';
+        isValid = false;
+    } else {
+        password.classList.remove('is-invalid');
+        passwordError.textContent = '';
+    }
+    
+    if (!isValid) {
+        e.preventDefault();
+    }
+});
+</script>
+{% endblock %}

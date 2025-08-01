@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Login - Employee Management System{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Login</h2>
+                <form method="POST" id="loginForm">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.username.label(class="form-label") }}
+                        {{ form.username(class="form-control", id="username") }}
+                        <span class="invalid-feedback" id="username-error"></span>
+                    </div>
+                    <div class="mb-3">
+                        {{ form.password.label(class="form-label") }}
+                        {{ form.password(class="form-control", id="password") }}
+                        <span class="invalid-feedback" id="password-error"></span>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </div>
+                </form>
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('forgot_password') }}" class="text-muted">Forgot Password?</a>
+                    <br>
+                    <a href="{{ url_for('register') }}" class="text-muted">Create Account</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    let isValid = true;
+    // Username validation
+    const username = document.getElementById('username');
+    const usernameError = document.getElementById('username-error');
+    if (username.value.length < 3) {
+        username.classList.add('is-invalid');
+        usernameError.textContent = 'Username must be at least 3 characters';
+        isValid = false;
+    } else {
+        username.classList.remove('is-invalid');
+        usernameError.textContent = '';
+    }
+    // Password validation
+    const password = document.getElementById('password');
+    const passwordError = document.getElementById('password-error');
+    if (password.value.length < 6) {
+        password.classList.add('is-invalid');
+        passwordError.textContent = 'Password must be at least 6 characters';
+        isValid = false;
+    } else {
+        password.classList.remove('is-invalid');
+        passwordError.textContent = '';
+    }
+    if (!isValid) {
+        e.preventDefault();
+    }
+});
+</script>
+{% endblock %}
