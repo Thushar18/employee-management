@@ -12,13 +12,14 @@ class Config:
     # Database configuration
     # Uses DATABASE_URL from environment, or defaults to MySQL with PyMySQL
     # Use PostgreSQL on Render
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'postgresql://localhost/employee_management'
-
-
-    if 'postgres://' in SQLALCHEMY_DATABASE_URI:
-        SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace('postgres://', 'postgresql://')
+    # Get DATABASE_URL from environment (set by Render)
+    raw_db_url = os.environ.get('DATABASE_URL')
     
-    # Disable SQLAlchemy event system (to save resources)
+    # Fix for Render: they use 'postgres://' but SQLAlchemy needs 'postgresql://'
+    if raw_db_url and raw_db_url.startswith('postgres://'):
+        raw_db_url = raw_db_url.replace('postgres://', 'postgresql://', 1)
+    
+    SQLALCHEMY_DATABASE_URI = raw_db_url or 'postgresql://localhost/employee_management'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Mail settings for password reset functionality

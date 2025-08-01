@@ -301,23 +301,25 @@ if __name__ == '__main__':
             print(f"❌ Failed to create tables: {e}")
 
         def create_default_users():
-            admin = User.query.filter_by(username='admin').first()
-            if not admin:
-                new_admin = User(username='admin', email='admin@jalaacademy.com', is_admin=True)
-                new_admin.set_password('admin123')
-                db.session.add(new_admin)
-                print("✓ Admin user created: admin/admin123")
+            try:
+                admin = User.query.filter_by(username='admin').first()
+                if not admin:
+                    new_admin = User(username='admin', email='admin@jalaacademy.com', is_admin=True)
+                    new_admin.set_password('admin123')
+                    db.session.add(new_admin)
+                    print("✓ Admin user created: admin/admin123")
 
-            user = User.query.filter_by(username='user').first()
-            if not user:
-                new_user = User(username='user', email='user@jalaacademy.com', is_admin=False)
-                new_user.set_password('user123')
-                db.session.add(new_user)
-                print("✓ Regular user created: user/user123")
+                user = User.query.filter_by(username='user').first()
+                if not user:
+                    new_user = User(username='user', email='user@jalaacademy.com', is_admin=False)
+                    new_user.set_password('user123')
+                    db.session.add(new_user)
+                    print("✓ Regular user created: user/user123")
 
-            db.session.commit()
-
-        create_default_users()
+                db.session.commit()
+            except Exception as e:
+                print(f"❌ Error creating users: {e}")
+                db.session.rollback()
 
         if Employee.query.count() == 0:
             sample_employee = Employee(
