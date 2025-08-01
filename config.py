@@ -4,12 +4,18 @@ from datetime import timedelta
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'jala-academy-secret-key-2024'
 
-    # Fix DATABASE_URL: Render uses 'postgres://' but SQLAlchemy needs 'postgresql://'
+    # Use Render's PostgreSQL database
     raw_db_url = os.environ.get('DATABASE_URL')
+
+    # Fix: Convert 'postgres://' → 'postgresql://'
     if raw_db_url and raw_db_url.startswith('postgres://'):
         raw_db_url = raw_db_url.replace('postgres://', 'postgresql://', 1)
-    
-    SQLALCHEMY_DATABASE_URI = raw_db_url or 'sqlite:///local.db'
+
+        # Never fall back to SQLite
+    if not raw_db_url:
+        raise ValueError("DATABASE_URL is not set. Cannot connect to database.")
+
+    SQLALCHEMY_DATABASE_URI = raw_db_url
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Mail settings
