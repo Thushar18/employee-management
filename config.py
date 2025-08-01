@@ -11,7 +11,7 @@ class Config:
 
     # Database configuration
     # Uses DATABASE_URL from environment, or defaults to MySQL with PyMySQL
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'mysql+pymysql://root:password@localhost/employee_management'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'postgresql://localhost/employee_management'
     
     # Disable SQLAlchemy event system (to save resources)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
