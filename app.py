@@ -292,17 +292,14 @@ def internal_error(error):
 
 if __name__ == '__main__':
     with app.app_context():
-        # Create upload folder
         os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
         
-        # Create all tables
         try:
             db.create_all()
             print("✅ Database tables created.")
         except Exception as e:
             print(f"❌ Failed to create tables: {e}")
 
-        # Create default users
         def create_default_users():
             admin = User.query.filter_by(username='admin').first()
             if not admin:
@@ -322,7 +319,6 @@ if __name__ == '__main__':
 
         create_default_users()
 
-        # Optional: Add sample employees
         if Employee.query.count() == 0:
             sample_employee = Employee(
                 first_name="John",
@@ -342,5 +338,5 @@ if __name__ == '__main__':
             db.session.commit()
             print("✓ Added sample employee")
 
-    # Run the app
+    
     app.run(debug=False)

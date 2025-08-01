@@ -14,7 +14,7 @@ class Config:
     # Use PostgreSQL on Render
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'postgresql://localhost/employee_management'
 
-# Make sure it uses the right dialect
+
     if 'postgres://' in SQLALCHEMY_DATABASE_URI:
         SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace('postgres://', 'postgresql://')
     
