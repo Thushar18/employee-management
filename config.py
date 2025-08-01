@@ -2,10 +2,6 @@ import os
 from datetime import timedelta
 
 class Config:
-    """
-    Configuration class for the Flask application.
-    Uses environment variables if available; otherwise, falls back to defaults.
-    """
     # Secret key for session management and security
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'jala-academy-secret-key-2024'
 
@@ -19,7 +15,7 @@ class Config:
     if raw_db_url and raw_db_url.startswith('postgres://'):
         raw_db_url = raw_db_url.replace('postgres://', 'postgresql://', 1)
     
-    SQLALCHEMY_DATABASE_URI = raw_db_url or 'postgresql://localhost/employee_management'
+    SQLALCHEMY_DATABASE_URI = raw_db_url or 'sqlite:///local.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Mail settings for password reset functionality
