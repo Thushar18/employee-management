@@ -295,7 +295,7 @@ if __name__ == '__main__':
         # Create upload folder
         os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
         
-        # Create all tables
+        # Create tables
         db.create_all()
         print("✅ Database tables created.")
 

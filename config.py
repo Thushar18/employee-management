@@ -4,8 +4,12 @@ from datetime import timedelta
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'jala-academy-secret-key-2024'
 
-    # Use SQLite — no external DB needed
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///app.db'
+    # Fix DATABASE_URL: Render uses 'postgres://' but SQLAlchemy needs 'postgresql://'
+    raw_db_url = os.environ.get('DATABASE_URL')
+    if raw_db_url and raw_db_url.startswith('postgres://'):
+        raw_db_url = raw_db_url.replace('postgres://', 'postgresql://', 1)
+    
+    SQLALCHEMY_DATABASE_URI = raw_db_url or 'sqlite:///local.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Mail settings
