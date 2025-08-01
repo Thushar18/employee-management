@@ -292,22 +292,85 @@ def internal_error(error):
 
 if __name__ == '__main__':
     with app.app_context():
-        # Create upload directory if it doesn't exist
+        # Create upload directory
         os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-        # Create database tables
+        
+        # Create all tables
         db.create_all()
+        print("✅ Database tables created.")
 
-        # Create default admin user if not exists
-        admin_user = User.query.filter_by(username='admin').first()
-        if not admin_user:
-            admin = User(
-                username='admin',
-                email='admin@jalaacademy.com',
-                is_admin=True
-            )
-            admin.set_password('admin123')
-            db.session.add(admin)
+        # Create default users
+        def create_default_users():
+            admin_user = User.query.filter_by(username='admin').first()
+            if not admin_user:
+                admin = User(
+                    username='admin',
+                    email='admin@jalaacademy.com',
+                    is_admin=True
+                )
+                admin.set_password('admin123')
+                db.session.add(admin)
+                print("✓ Admin user created: admin/admin123")
+
+            regular_user = User.query.filter_by(username='user').first()
+            if not regular_user:
+                user = User(
+                    username='user',
+                    email='user@jalaacademy.com',
+                    is_admin=False
+                )
+                user.set_password('user123')
+                db.session.add(user)
+                print("✓ Regular user created: user/user123")
+
             db.session.commit()
-            print("Default admin user created: admin/admin123")
 
-    app.run(debug=True)
+        create_default_users()
+
+        # Create sample employees if none exist
+        def create_sample_employees():
+            if Employee.query.count() == 0:
+                employees = [
+                    {
+                        'first_name': 'John',
+                        'last_name': 'Doe',
+                        'email': 'john.doe@company.com',
+                        'phone': '+1-555-0101',
+                        'department': 'IT',
+                        'position': 'Software Engineer',
+                        'salary': 75000.00,
+                        'hire_date': datetime(2023, 1, 15),
+                        'gender': 'Male',
+                        'address': '123 Main St, Anytown, USA 12345',
+                        'skills': 'Python, JavaScript, SQL',
+                        'is_active': True,
+                        'created_by': 1
+                    },
+                    {
+                        'first_name': 'Jane',
+                        'last_name': 'Smith',
+                        'email': 'jane.smith@company.com',
+                        'phone': '+1-555-0102',
+                        'department': 'HR',
+                        'position': 'HR Manager',
+                        'salary': 65000.00,
+                        'hire_date': datetime(2022, 6, 10),
+                        'gender': 'Female',
+                        'address': '456 Oak Ave, Somewhere, USA 67890',
+                        'skills': 'Communication, Leadership',
+                        'is_active': True,
+                        'created_by': 1
+                    }
+                ]
+                
+                for emp_data in employees:
+                    employee = Employee(**emp_data)
+                    db.session.add(employee)
+                
+                db.session.commit()
+                print(f"✓ Created {len(employees)} sample employees")
+
+        create_sample_employees()
+
+    # Run the app
+    app.run(debug=False)  # Turn off debug in production
